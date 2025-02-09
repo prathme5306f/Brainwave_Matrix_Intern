@@ -1,0 +1,42 @@
+Requirements:
+
+As we use python we need to download python 1st.
+
+To check if Python is installed, open the command prompt (cmd) and type:-  python --version
+ 
+It should return something like:- Python 3.x.x
+
+Before running the program, install the necessary libraries in VS Code’s terminal. Open VS Code, then go to Terminal → New Terminal, and run:- pip install requests bs4 validators googlesearch-python
+
+This installs:-
+requests → To check URLs
+bs4 (BeautifulSoup) → For web scraping (optional)
+validators → To validate URL formats
+googlesearch-python → To check if the domain appears in Google search results
+
+
+ OR
+
+pip install requests validators googlesearch-python
+(as per need in code)
+
+
+This will install:-
+
+requests → For handling web requests
+validators → For URL validation
+googlesearch-python → To check if a domain appears in Google
+
+
+Verify Installation
+After installing, check if Python recognizes the modules by running:-
+python -c "import requests, validators, googlesearch; print('Modules installed successfully!')"
+If you see "Modules installed successfully!", you’re good to go.
+
+
+Alternative Solution (If pip Doesn't Work)
+If pip install gives an error, try:- python -m pip install requests validators googlesearch-python
+
+
+
+need to install google search if you use googlesearch for scanning for this:- pip install requests bs4 validators googlesearch-python
