@@ -1,0 +1,13 @@
+How to Use
+
+Run the script in VS Code:-
+python phishing_scanner.py
+
+Choose an option:
+1 → Enter a single URL to scan
+2 → Provide a text file with multiple URLs
+
+Example Input File (urls.txt):-
+http://login.paypal-secure.com
+https://example-phishing-site.com
+https://google.com

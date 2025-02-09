@@ -1,0 +1,27 @@
+How to Get Google Safe Browsing API Key
+Google Safe Browsing API allows you to check if a URL is blacklisted by Google for phishing or malware.
+
+Step 1: Sign Up on Google Cloud
+Go to Google Cloud Console
+Sign in with your Google account.
+Step 2: Create a New Project
+Click "Select a Project" → "New Project"
+Enter Project Name → Click Create
+Step 3: Enable Google Safe Browsing API
+Go to Google Safe Browsing API Page
+Click "Enable"
+Step 4: Get API Key
+Go to Credentials Page
+Click "Create Credentials" → Select API Key
+Copy the API Key and replace YOUR_GOOGLE_SAFE_BROWSING_API_KEY in the script.
+
+
+How to Get VirusTotal API Key
+VirusTotal checks if a URL is reported as malicious by security researchers.
+
+Step 1: Sign Up for VirusTotal
+Go to VirusTotal
+Create an account (free or premium).
+Step 2: Get API Key
+After signing in, go to Settings
+Copy your API Key and replace YOUR_VIRUSTOTAL_API_KEY in the script.

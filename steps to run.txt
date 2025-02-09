@@ -1,0 +1,5 @@
+steps to run
+Run the Script in VS Code
+Save the file (Ctrl + S).
+Open the terminal in VS Code (View → Terminal).
+Run the script using:- python file_name.py
