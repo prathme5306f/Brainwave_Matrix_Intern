@@ -1,0 +1,149 @@
+import re
+import requests
+import validators
+import json
+from googlesearch import search
+
+# Optional: Google Safe Browsing API Key (Get it from Google)
+GOOGLE_API_KEY = "YOUR_GOOGLE_SAFE_BROWSING_API_KEY"
+GOOGLE_SAFE_BROWSING_URL = "https://safebrowsing.googleapis.com/v4/threatMatches:find"
+
+# Optional: VirusTotal API Key (Get it from VirusTotal)
+VIRUSTOTAL_API_KEY = "YOUR_VIRUSTOTAL_API_KEY"
+VIRUSTOTAL_URL = "https://www.virustotal.com/api/v3/urls"
+
+# Function to validate a URL
+def is_valid_url(url):
+    return validators.url(url)
+
+# Function to detect common phishing patterns
+def detect_phishing_patterns(url):
+    phishing_signs = []
+
+    if "@" in url:
+        phishing_signs.append("Contains '@' symbol (URL masking technique).")
+
+    if url.count('.') > 3:
+        phishing_signs.append("Too many subdomains (possible phishing attempt).")
+
+    if len(url) > 75:
+        phishing_signs.append("Unusually long URL (might be a disguised phishing link).")
+
+    if re.search(r"%[0-9A-Fa-f]{2}", url):
+        phishing_signs.append("Contains encoded characters (%20, %2F, etc.).")
+
+    return phishing_signs
+
+# Function to check if the domain is found on Google
+def check_google_presence(url):
+    try:
+        domain = re.sub(r"https?://(www\.)?", "", url).split('/')[0]
+        print(f"[DEBUG] Extracted Domain: {domain}")
+        
+        search_results = list(search(domain, num_results=5))
+        return any(domain in result for result in search_results)
+    except Exception as e:
+        print(f"[ERROR] Google search failed: {e}")
+        return False
+
+# Function to check against Google Safe Browsing API
+def check_google_safe_browsing(url):
+    if not GOOGLE_API_KEY:
+        return "[SKIPPED] Google Safe Browsing check (API key not set)."
+
+    payload = {
+        "client": {"clientId": "phishing-scanner", "clientVersion": "1.0"},
+        "threatInfo": {
+            "threatTypes": ["MALWARE", "SOCIAL_ENGINEERING"],
+            "platformTypes": ["ANY_PLATFORM"],
+            "threatEntryTypes": ["URL"],
+            "threatEntries": [{"url": url}],
+        },
+    }
+    
+    try:
+        response = requests.post(GOOGLE_SAFE_BROWSING_URL, params={"key": GOOGLE_API_KEY}, json=payload)
+        result = response.json()
+        if "matches" in result:
+            return "[WARNING] Found in Google Safe Browsing Database (Potential Phishing Site)."
+        else:
+            return "[✓] Not found in Google Safe Browsing Database (Likely Safe)."
+    except Exception as e:
+        return f"[ERROR] Google Safe Browsing check failed: {e}"
+
+# Function to check against VirusTotal API
+def check_virustotal(url):
+    if not VIRUSTOTAL_API_KEY:
+        return "[SKIPPED] VirusTotal check (API key not set)."
+
+    headers = {"x-apikey": VIRUSTOTAL_API_KEY}
+    data = {"url": url}
+
+    try:
+        response = requests.post(VIRUSTOTAL_URL, headers=headers, data=data)
+        result = response.json()
+        if response.status_code == 200:
+            return f"[✓] VirusTotal Scan Completed: {result.get('data', {}).get('attributes', {}).get('last_analysis_stats', {})}"
+        else:
+            return f"[WARNING] VirusTotal Scan Failed: {result}"
+    except Exception as e:
+        return f"[ERROR] VirusTotal check failed: {e}"
+
+# Main function to scan a URL
+def phishing_url_scanner(url):
+    print("\n[+] Scanning:", url)
+
+    if not is_valid_url(url):
+        print("[ERROR] Invalid URL format.")
+        return
+
+    patterns = detect_phishing_patterns(url)
+    if patterns:
+        print("[WARNING] Suspicious Patterns Detected:")
+        for pattern in patterns:
+            print("   -", pattern)
+    else:
+        print("[✓] No suspicious patterns found.")
+
+    google_check = check_google_presence(url)
+    if google_check:
+        print("[✓] Domain appears on Google (likely safe).")
+    else:
+        print("[WARNING] Domain not found on Google (potential phishing site).")
+
+    # Check Google Safe Browsing API
+    google_sb_result = check_google_safe_browsing(url)
+    print(google_sb_result)
+
+    # Check VirusTotal API
+    vt_result = check_virustotal(url)
+    print(vt_result)
+
+    print("\n[✓] Scan Complete.\n")
+
+# Function to scan multiple URLs from a file
+def scan_urls_from_file(filename):
+    try:
+        with open(filename, "r") as file:
+            urls = file.readlines()
+            urls = [url.strip() for url in urls if url.strip()]
+            for url in urls:
+                phishing_url_scanner(url)
+    except FileNotFoundError:
+        print("[ERROR] File not found. Please provide a valid file.")
+
+# Entry point of the script
+if __name__ == "__main__":
+    choice = input("Enter 1 to scan a single URL or 2 to scan from a file: ").strip()
+    
+    if choice == "1":
+        test_url = input("Enter the URL to scan: ").strip()
+        print(f"[DEBUG] URL Entered: {test_url}")
+        phishing_url_scanner(test_url)
+
+    elif choice == "2":
+        filename = input("Enter the filename containing URLs: ").strip()
+        scan_urls_from_file(filename)
+
+    else:
+        print("[ERROR] Invalid choice. Please enter 1 or 2.")

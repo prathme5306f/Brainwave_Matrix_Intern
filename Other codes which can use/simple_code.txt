@@ -1,0 +1,68 @@
+import re
+import requests
+import validators
+from googlesearch import search
+
+# Function to check if URL is valid
+def is_valid_url(url):
+    return validators.url(url)
+
+# Function to detect phishing patterns
+def detect_phishing_patterns(url):
+    phishing_signs = []
+
+    # Check for "@" symbol (often used to mask URLs)
+    if "@" in url:
+        phishing_signs.append("Contains '@' symbol (URL masking technique).")
+
+    # Check for multiple subdomains
+    if url.count('.') > 3:
+        phishing_signs.append("Too many subdomains (possible phishing attempt).")
+
+    # Check for long URLs
+    if len(url) > 75:
+        phishing_signs.append("Unusually long URL (might be a disguised phishing link).")
+
+    # Check for hexadecimal encoding
+    if re.search(r"%[0-9A-Fa-f]{2}", url):
+        phishing_signs.append("Contains encoded characters (%20, %2F, etc.).")
+
+    return phishing_signs
+
+# Function to check if domain exists on Google
+def check_google_presence(url):
+    try:
+        domain = re.sub(r"https?://(www\.)?", "", url).split('/')[0]
+        search_results = list(search(domain, num_results=5))
+        return any(domain in result for result in search_results)
+    except Exception:
+        return False
+
+# Main function to scan a URL
+def phishing_url_scanner(url):
+    if not is_valid_url(url):
+        return "Invalid URL format."
+
+    print("\n[+] Scanning:", url)
+
+    # Check phishing patterns
+    patterns = detect_phishing_patterns(url)
+    if patterns:
+        print("[!] Suspicious Patterns Detected:")
+        for pattern in patterns:
+            print("   -", pattern)
+    else:
+        print("[✓] No suspicious patterns found.")
+
+    # Check Google presence
+    if check_google_presence(url):
+        print("[✓] Domain appears on Google (likely safe).")
+    else:
+        print("[!] Domain not found on Google (potential phishing site).")
+
+    print("\n[✓] Scan Complete.\n")
+
+# Example usage
+if __name__ == "__main__":
+    test_url = input("Enter the URL to scan: ")
+    phishing_url_scanner(test_url)
