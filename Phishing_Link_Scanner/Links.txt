@@ -1,0 +1,23 @@
+<<<<<<< HEAD
+link for list of phishing links:-https://www.phishtank.com/phish_search.php?verified=u&active=y
+
+Link of website for cross checking:-
+https://www.virustotal.com/
+=======
+Real Phishing Links (For Testing Only)
+Use PhishTank → https://www.phishtank.com
+A crowdsourced database of real phishing URLs.
+Google Safe Browsing API → https://transparencyreport.google.com/safe-browsing/search
+Check if a site is flagged as phishing/malicious.
+VirusTotal URL Scanner → https://www.virustotal.com/
+Scan URLs for malware/phishing threats.
+
+
+Safe Phishing Test Links (For Security Testing)
+These links simulate phishing websites but are harmless:
+
+Google Safe Browsing Test → https://testsafebrowsing.appspot.com/
+EICAR Test Phishing Page → http://www.eicar.org/download/eicar.com
+PhishTank Example → http://www.example.com/phishing-test (Use a real phishing domain from PhishTank)
+AMTSO Phishing Test Page → https://www.amtso.org/check-phishing-page/
+>>>>>>> 9e2f393 (Fixed repository and restructured files)
